@@ -28,7 +28,7 @@ This project demonstrates end-to-end observability for a web service:
 
 ```bash
 # Clone and start
-git clone https://github.com/YOUR_USERNAME/tennis-arb-monitoring.git
+git clone https://github.com/TroxDev/tennis-arb-monitoring.git
 cd tennis-arb-monitoring
 docker compose up -d
 
