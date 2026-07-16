@@ -48,24 +48,4 @@ docker compose up -d
 # Prometheus:   http://localhost:9090
 # Alertmanager: http://localhost:9093
 
-Monitoring Features
 
-| Feature                | Implementation                                            |
-| ---------------------- | --------------------------------------------------------- |
-| Uptime check           | Blackbox probe every 30s                                  |
-| Alert on downtime      | `probe_success == 0` for 1m                               |
-| Alert on slow response | `probe_duration_seconds > 2` for 2m                       |
-| Auto-restart           | Python script restarts nginx after 2 consecutive failures |
-
-What I Learned
- - Configured multi-service Docker networks for internal communication
- - Wrote Prometheus scrape configs with relabeling for Blackbox Exporter
- - Defined alerting rules with severity levels and evaluation windows
- - Built an automated recovery mechanism to reduce manual intervention
-
-Future Improvements
- - Grafana dashboard for visualization
- - Email/SMS notification integration
- - Multi-region probing
- - TLS/SSL certificate monitoring
->>>>>>> c763529 (initial commit: monitoring stack with prometheus, blackbox and alertmanager)
