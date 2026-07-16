@@ -1,0 +1,11 @@
+groups:
+  - name: tennis_alerts
+    rules:
+      - alert: TennisArbDown
+        expr: probe_success == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Tennis Arbitrage App Down"
+          description: "Nginx server or tennis_arb.html is unreachable by Blackbox Exporter."

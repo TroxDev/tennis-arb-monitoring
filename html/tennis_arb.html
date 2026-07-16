@@ -1,0 +1,829 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#0E1620;
+    --panel:#141F2C;
+    --panel-2:#101923;
+    --border:#243448;
+    --text:#E7ECF2;
+    --muted:#8CA0B3;
+    --muted-2:#5E7185;
+    --a:#2E86FF;
+    --b:#E0A438;
+    --ok:#3FB68B;
+    --caution:#E8823C;
+    --danger:#E5484D;
+    --font-d:'Space Grotesk',system-ui,sans-serif;
+    --font-b:'Inter',system-ui,sans-serif;
+    --font-m:'IBM Plex Mono','SFMono-Regular',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;}
+  #arb-root{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-b);
+    min-height:100vh;
+    padding:32px 16px 64px;
+  }
+  .wrap{max-width:860px;margin:0 auto;}
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom:1px solid var(--border);
+    padding-bottom:18px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  .masthead h1{
+    font-family:var(--font-d);
+    font-size:26px;
+    font-weight:700;
+    margin:0 0 4px;
+    letter-spacing:0.01em;
+  }
+  .masthead .sub{
+    color:var(--muted);
+    font-size:13px;
+    font-family:var(--font-m);
+  }
+  .bankroll-badge{
+    text-align:right;
+    font-family:var(--font-m);
+  }
+  .bankroll-badge .lbl{
+    color:var(--muted-2);
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+  .bankroll-badge .val{
+    font-family:var(--font-d);
+    font-size:24px;
+    font-weight:600;
+    color:var(--ok);
+  }
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:22px 22px 24px;
+    margin-bottom:20px;
+  }
+  .eyebrow{
+    font-family:var(--font-m);
+    font-size:11px;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    margin-bottom:6px;
+  }
+  .panel h2{
+    font-family:var(--font-d);
+    font-size:17px;
+    font-weight:600;
+    margin:0 0 16px;
+  }
+  .row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .row-3{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:14px;
+  }
+  @media(max-width:560px){
+    .row, .row-3{grid-template-columns:1fr;}
+  }
+  label{
+    display:block;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  input[type=text], input[type=number], select{
+    width:100%;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--font-m);
+    font-size:14px;
+    padding:9px 10px;
+    border-radius:4px;
+    outline:none;
+  }
+  input[type=text]:focus, input[type=number]:focus, select:focus{
+    border-color:var(--a);
+  }
+  .field{margin-bottom:14px;}
+  .field.accent-a label{color:var(--a);}
+  .field.accent-b label{color:var(--b);}
+
+  /* probability bar - signature element */
+  .probbar-wrap{margin:18px 0 8px;}
+  .probbar-track{
+    position:relative;
+    height:34px;
+    background:var(--panel-2);
+    border:1px solid var(--border);
+    border-radius:4px;
+    overflow:hidden;
+  }
+  .seg{
+    position:absolute;
+    top:0;bottom:0;
+    display:flex;
+    align-items:center;
+    font-family:var(--font-m);
+    font-size:11px;
+    color:#0E1620;
+    font-weight:600;
+    padding-left:8px;
+    white-space:nowrap;
+    overflow:hidden;
+  }
+  .seg-a{background:var(--a);}
+  .seg-b{background:var(--b);}
+  .marker-100{
+    position:absolute;
+    top:-4px;bottom:-4px;
+    width:2px;
+    background:var(--text);
+  }
+  .marker-label{
+    position:absolute;
+    top:-20px;
+    font-family:var(--font-m);
+    font-size:10px;
+    color:var(--muted);
+    transform:translateX(-50%);
+  }
+  .sigma-readout{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-top:26px;
+    font-family:var(--font-m);
+  }
+  .sigma-readout .big{
+    font-family:var(--font-d);
+    font-size:22px;
+    font-weight:700;
+  }
+  .sigma-readout .tag{
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:3px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    font-weight:600;
+  }
+  .tag-ok{background:rgba(63,182,139,0.15);color:var(--ok);}
+  .tag-bad{background:rgba(229,72,77,0.15);color:var(--danger);}
+
+  /* ledger table */
+  .ledger{
+    width:100%;
+    border-collapse:collapse;
+    font-family:var(--font-m);
+    font-size:13.5px;
+  }
+  .ledger td, .ledger th{
+    padding:9px 4px;
+    border-bottom:1px solid var(--border);
+    text-align:left;
+  }
+  .ledger th{
+    color:var(--muted-2);
+    font-weight:500;
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+  .ledger td.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .ledger tr.total td{
+    border-top:1px solid var(--muted-2);
+    border-bottom:none;
+    font-weight:600;
+    color:var(--ok);
+    padding-top:12px;
+  }
+  .swatch{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;}
+
+  select#roundMode{max-width:220px;}
+
+  .rule-status{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:4px;
+    border:1px solid var(--border);
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+  }
+  .rule-status .dot{
+    width:10px;height:10px;border-radius:50%;
+    margin-top:4px;flex-shrink:0;
+  }
+  .rule-status .title{
+    font-family:var(--font-d);
+    font-weight:600;
+    font-size:14px;
+    margin-bottom:4px;
+  }
+  .rule-status .desc{
+    font-size:13px;
+    color:var(--muted);
+    line-height:1.5;
+  }
+  .status-safe .dot{background:var(--ok);}
+  .status-safe .title{color:var(--ok);}
+  .status-caution .dot{background:var(--caution);}
+  .status-caution .title{color:var(--caution);}
+  .status-danger .dot{background:var(--danger);}
+  .status-danger .title{color:var(--danger);}
+
+  button{
+    font-family:var(--font-b);
+    font-weight:600;
+    font-size:13px;
+    border:none;
+    border-radius:4px;
+    padding:11px 18px;
+    cursor:pointer;
+  }
+  .btn-primary{background:var(--a);color:#0E1620;}
+  .btn-primary:disabled{background:var(--muted-2);color:var(--panel);cursor:not-allowed;}
+  .btn-ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--border);
+  }
+  .btn-ghost:hover{color:var(--text);border-color:var(--muted-2);}
+  .btn-row{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;}
+  .hint{font-size:12px;color:var(--muted-2);margin-top:6px;line-height:1.5;}
+  .log-empty{color:var(--muted-2);font-size:13px;font-style:italic;padding:8px 0;}
+  .footnote{
+    font-size:11.5px;
+    color:var(--muted-2);
+    line-height:1.6;
+    border-top:1px solid var(--border);
+    padding-top:16px;
+    margin-top:8px;
+  }
+  .log-table-wrap{overflow-x:auto;}
+
+  .match-card{
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:13px 15px;
+    margin-bottom:10px;
+    background:var(--panel-2);
+  }
+  .match-card .top{
+    display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;
+  }
+  .match-card .players{font-family:var(--font-d);font-weight:600;font-size:14.5px;}
+  .match-card .meta{font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--font-m);}
+  .match-card .flag{
+    font-size:10.5px;text-transform:uppercase;letter-spacing:0.05em;
+    padding:3px 9px;border-radius:3px;
+    background:rgba(232,130,60,0.15);color:var(--caution);
+    white-space:nowrap;font-family:var(--font-m);
+  }
+  .match-card .note{font-size:13px;color:var(--muted);margin-top:9px;line-height:1.5;}
+  .match-card .use-btn{margin-top:11px;font-size:12px;padding:7px 12px;}
+  .scan-disclaimer{font-size:11px;color:var(--muted-2);margin-top:10px;line-height:1.5;}
+</style>
+
+<div id="arb-root">
+  <div class="wrap">
+
+    <div class="masthead">
+      <div>
+        <h1>Tennis Arbitrage Ledger</h1>
+        <div class="sub">Two-way market scanner &amp; stake calculator</div>
+      </div>
+      <div class="bankroll-badge">
+        <div class="lbl">Active Bankroll</div>
+        <div class="val" id="badgeBankroll">€100.00</div>
+      </div>
+    </div>
+
+    <!-- PANEL 0: DAILY SCAN -->
+    <div class="panel">
+      <div class="eyebrow">00 — Daily Scan</div>
+      <h2>Today's Watchlist</h2>
+      <div class="hint" style="margin-bottom:14px;">
+        Searches the web for today's ATP/WTA main tour matches and flags the ones statistically more likely to carry a sharp/soft pricing gap — recent injury doubt, an in-season retirement history, lopsided public sentiment, or withdrawal risk. This does not read live bookmaker odds and cannot confirm an arb by itself — it's a shortlist worth checking manually against your paired books in Step 01 below.
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="scanBtn">Scan today's matches</button>
+      </div>
+      <div id="scanStatus" class="hint" style="display:none;margin-top:12px;"></div>
+      <div id="scanResults" style="margin-top:6px;"></div>
+    </div>
+
+    <!-- PANEL 1: MARKET SCAN -->
+    <div class="panel" id="marketScanPanel">
+      <div class="eyebrow">01 — Market Scan</div>
+      <h2>Market Implied Probability</h2>
+
+      <div class="row">
+        <div class="field accent-a">
+          <label id="lblBookA">Book A — Odds on Player A</label>
+          <input type="number" id="oddsA" step="0.01" min="1.01" value="2.10">
+        </div>
+        <div class="field accent-b">
+          <label id="lblBookB">Book B — Odds on Player B</label>
+          <input type="number" id="oddsB" step="0.01" min="1.01" value="1.95">
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label>Book A name (optional)</label>
+          <input type="text" id="bookAName" placeholder="e.g. Pinnacle">
+        </div>
+        <div class="field">
+          <label>Book B name (optional)</label>
+          <input type="text" id="bookBName" placeholder="e.g. Bet365">
+        </div>
+      </div>
+
+      <div class="probbar-wrap">
+        <div class="marker-label" id="markerLabel" style="left:0%">100%</div>
+        <div class="probbar-track">
+          <div class="marker-100" id="marker100" style="left:0%"></div>
+          <div class="seg seg-a" id="segA" style="left:0%;width:0%">A</div>
+          <div class="seg seg-b" id="segB" style="left:0%;width:0%">B</div>
+        </div>
+      </div>
+
+      <div class="sigma-readout">
+        <div>
+          <div style="color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;">Σ (1/OddsA + 1/OddsB)</div>
+          <div class="big" id="sigmaVal">98.90%</div>
+        </div>
+        <div class="tag" id="sigmaTag">Arbitrage — 1.11% edge</div>
+      </div>
+      <div class="hint">Σ &lt; 100% ⇒ arbitrage exists. Σ ≥ 100% ⇒ no edge — the books' combined margin exceeds the payout.</div>
+    </div>
+
+    <!-- PANEL 2: STAKE LEDGER -->
+    <div class="panel" id="stakePanel">
+      <div class="eyebrow">02 — Stake Ledger</div>
+      <h2>Equal-Profit Stake Sizing</h2>
+
+      <div class="row-3">
+        <div class="field">
+          <label>Bankroll (€)</label>
+          <input type="number" id="bankrollInput" step="0.01" min="0" value="100">
+        </div>
+        <div class="field">
+          <label>Rounding</label>
+          <select id="roundMode">
+            <option value="exact">Exact cent</option>
+            <option value="0.5">Nearest €0.50</option>
+            <option value="1">Nearest €1.00</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Match / Tournament</label>
+          <input type="text" id="matchName" placeholder="e.g. Sinner vs Alcaraz, R16">
+        </div>
+      </div>
+
+      <table class="ledger">
+        <thead>
+          <tr><th></th><th class="num">Stake</th><th class="num">Odds</th><th class="num">Payout if win</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="swatch" style="background:var(--a);"></span><span id="ledgerLabelA">Player A</span></td>
+            <td class="num" id="stakeAOut">€48.15</td>
+            <td class="num" id="oddsAOut">2.10</td>
+            <td class="num" id="payoutAOut">€101.11</td>
+          </tr>
+          <tr>
+            <td><span class="swatch" style="background:var(--b);"></span><span id="ledgerLabelB">Player B</span></td>
+            <td class="num" id="stakeBOut">€51.85</td>
+            <td class="num" id="oddsBOut">1.95</td>
+            <td class="num" id="payoutBOut">€101.11</td>
+          </tr>
+          <tr class="total">
+            <td>Guaranteed profit (worst case)</td>
+            <td class="num" colspan="3" id="profitOut">€1.11 (1.11%)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="hint" id="stakeHint">Total staked equals bankroll under exact-cent rounding; coarser rounding may leave a small unallocated remainder, shown below if nonzero.</div>
+
+      <div class="btn-row">
+        <button class="btn-primary" id="logBtn">Log this arb to bet log ↓</button>
+      </div>
+    </div>
+
+    <!-- PANEL 3: RETIREMENT MATRIX -->
+    <div class="panel">
+      <div class="eyebrow">03 — Retirement Rule Matrix</div>
+      <h2>Bookmaker Pairing Check</h2>
+
+      <div class="row">
+        <div class="field accent-a">
+          <label>Book A retirement rule</label>
+          <select id="ruleA">
+            <option value="ball_served">Ball Served (action from first point)</option>
+            <option value="one_set">One Set Completed</option>
+            <option value="full_match">Full Match Completed</option>
+          </select>
+        </div>
+        <div class="field accent-b">
+          <label>Book B retirement rule</label>
+          <select id="ruleB">
+            <option value="ball_served">Ball Served (action from first point)</option>
+            <option value="one_set">One Set Completed</option>
+            <option value="full_match" selected>Full Match Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="rule-status" id="ruleStatus">
+        <div class="dot"></div>
+        <div>
+          <div class="title" id="ruleTitle">—</div>
+          <div class="desc" id="ruleDesc">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 4: BET LOG -->
+    <div class="panel">
+      <div class="eyebrow">04 — Bet Log</div>
+      <h2>Running Bankroll</h2>
+
+      <div class="log-table-wrap">
+        <table class="ledger" id="logTable">
+          <thead>
+            <tr>
+              <th>Match</th><th class="num">Stake A</th><th class="num">Stake B</th>
+              <th class="num">Σ</th><th class="num">Profit</th><th class="num">Bankroll after</th>
+            </tr>
+          </thead>
+          <tbody id="logBody">
+          </tbody>
+        </table>
+        <div class="log-empty" id="logEmptyMsg">No arbs logged yet — logged entries are saved to this browser and persist between visits.</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-ghost" id="clearLogBtn">Reset log &amp; bankroll to €100</button>
+      </div>
+    </div>
+
+    <div class="footnote">
+      This tool performs mathematical stake calculations only. It does not place bets, access bookmaker accounts, or guarantee real-world settlement — retirement rules, palpable-error voids, and account limits are determined solely by each bookmaker. Verify each book's current tennis regulations before relying on any pairing shown as "safe" here.
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const $ = (id) => document.getElementById(id);
+
+  const oddsAInput = $('oddsA'), oddsBInput = $('oddsB');
+  const bookAName = $('bookAName'), bookBName = $('bookBName');
+  const bankrollInput = $('bankrollInput'), roundMode = $('roundMode'), matchName = $('matchName');
+  const ruleA = $('ruleA'), ruleB = $('ruleB');
+  const logBtn = $('logBtn'), clearLogBtn = $('clearLogBtn');
+
+  let currentCalc = null; // holds latest valid computation for logging
+  let bankroll = 100;
+  let log = [];
+
+  const fmtEuro = (n) => '€' + n.toFixed(2);
+  const fmtPct = (n) => n.toFixed(2) + '%';
+
+  function roundStake(x, mode){
+    if (mode === '0.5') return Math.round(x*2)/2;
+    if (mode === '1') return Math.round(x);
+    return Math.round(x*100)/100;
+  }
+
+  function updateLabels(){
+    const nameA = bookAName.value.trim() || 'Book A';
+    const nameB = bookBName.value.trim() || 'Book B';
+    $('lblBookA').textContent = nameA + ' — Odds on Player A';
+    $('lblBookB').textContent = nameB + ' — Odds on Player B';
+    $('ledgerLabelA').textContent = 'Player A (' + nameA + ')';
+    $('ledgerLabelB').textContent = 'Player B (' + nameB + ')';
+  }
+
+  function recalc(){
+    updateLabels();
+    const oddsA = parseFloat(oddsAInput.value);
+    const oddsB = parseFloat(oddsBInput.value);
+    const br = parseFloat(bankrollInput.value);
+
+    if (!(oddsA > 1) || !(oddsB > 1) || isNaN(br) || br < 0){
+      currentCalc = null;
+      logBtn.disabled = true;
+      return;
+    }
+
+    const impA = 1/oddsA;
+    const impB = 1/oddsB;
+    const sigma = impA + impB;
+    const arbExists = sigma < 1;
+
+    // --- probability bar ---
+    const scaleMax = Math.max(sigma, 1) * 1.08;
+    const aWidthPct = (impA/scaleMax)*100;
+    const bWidthPct = (impB/scaleMax)*100;
+    const markerPct = (1/scaleMax)*100;
+
+    const segA = $('segA'), segB = $('segB');
+    segA.style.left = '0%';
+    segA.style.width = aWidthPct + '%';
+    segA.textContent = aWidthPct > 12 ? ('A ' + fmtPct(impA*100)) : '';
+    segB.style.left = aWidthPct + '%';
+    segB.style.width = bWidthPct + '%';
+    segB.textContent = bWidthPct > 12 ? ('B ' + fmtPct(impB*100)) : '';
+    $('marker100').style.left = markerPct + '%';
+    $('markerLabel').style.left = markerPct + '%';
+
+    $('sigmaVal').textContent = fmtPct(sigma*100);
+    const sigmaTag = $('sigmaTag');
+    if (arbExists){
+      const edge = (1/sigma - 1) * 100;
+      sigmaTag.textContent = 'Arbitrage — ' + fmtPct(edge) + ' edge';
+      sigmaTag.className = 'tag tag-ok';
+    } else {
+      const margin = (sigma - 1) * 100;
+      sigmaTag.textContent = 'No edge — ' + fmtPct(margin) + ' book margin';
+      sigmaTag.className = 'tag tag-bad';
+    }
+
+    // --- stake ledger ---
+    const rawA = br * (impA/sigma);
+    const rawB = br * (impB/sigma);
+    const mode = roundMode.value;
+    const stakeA = roundStake(rawA, mode);
+    const stakeB = roundStake(rawB, mode);
+    const totalStaked = stakeA + stakeB;
+    const payoutA = stakeA * oddsA;
+    const payoutB = stakeB * oddsB;
+    const worstCase = Math.min(payoutA, payoutB);
+    const guaranteedProfit = worstCase - totalStaked;
+    const profitPct = totalStaked > 0 ? (guaranteedProfit/totalStaked*100) : 0;
+    const remainder = br - totalStaked;
+
+    $('stakeAOut').textContent = fmtEuro(stakeA);
+    $('stakeBOut').textContent = fmtEuro(stakeB);
+    $('oddsAOut').textContent = oddsA.toFixed(2);
+    $('oddsBOut').textContent = oddsB.toFixed(2);
+    $('payoutAOut').textContent = fmtEuro(payoutA);
+    $('payoutBOut').textContent = fmtEuro(payoutB);
+
+    const profitOut = $('profitOut');
+    profitOut.textContent = fmtEuro(guaranteedProfit) + ' (' + fmtPct(profitPct) + ')';
+    profitOut.style.color = guaranteedProfit >= 0 ? 'var(--ok)' : 'var(--danger)';
+
+    let hint = 'Total staked: ' + fmtEuro(totalStaked) + ' of ' + fmtEuro(br) + ' bankroll.';
+    if (Math.abs(remainder) >= 0.01){
+      hint += ' Unallocated remainder from rounding: ' + fmtEuro(remainder) + '.';
+    }
+    if (!arbExists){
+      hint += ' No arbitrage at current odds — this ledger reflects a losing or break-even split.';
+    }
+    $('stakeHint').textContent = hint;
+
+    // --- retirement matrix ---
+    updateRuleStatus();
+
+    currentCalc = {
+      arbExists, oddsA, oddsB, stakeA, stakeB, totalStaked, guaranteedProfit, br
+    };
+    logBtn.disabled = !arbExists;
+    logBtn.textContent = arbExists ? 'Log this arb to bet log ↓' : 'No arbitrage — nothing to log';
+  }
+
+  function updateRuleStatus(){
+    const a = ruleA.value, b = ruleB.value;
+    const box = $('ruleStatus'), title = $('ruleTitle'), desc = $('ruleDesc');
+    box.className = 'rule-status';
+
+    const RULE_LABEL = {
+      ball_served: 'Ball Served',
+      one_set: 'One Set Completed',
+      full_match: 'Full Match Completed'
+    };
+
+    if (a === b){
+      box.classList.add('status-safe');
+      title.textContent = 'SAFE — Matched Rules (' + RULE_LABEL[a] + ')';
+      desc.textContent = 'Both books settle a retirement identically. A withdrawal at any point will grade or void both legs the same way — the arbitrage guarantee holds through a retirement scenario.';
+    } else if ((a === 'ball_served' && b === 'full_match') || (a === 'full_match' && b === 'ball_served')){
+      box.classList.add('status-danger');
+      title.textContent = 'DANGER — Maximum Asymmetry';
+      desc.textContent = 'One book will grade a live score as a win/loss the instant a player retires; the other voids the entire bet regardless of score. A trailing-player retirement can lose one full stake with zero offsetting refund. Do not pair these two books for this match.';
+    } else {
+      box.classList.add('status-caution');
+      title.textContent = 'CAUTION — Partial Mismatch';
+      desc.textContent = 'These rules diverge on where the settlement threshold sits (' + RULE_LABEL[a] + ' vs. ' + RULE_LABEL[b] + '). A retirement before the stricter threshold is reached voids one leg while the other may still grade — restrict this pairing to healthy players in early rounds, or avoid it.';
+    }
+  }
+
+  // --- persistence ---
+  async function loadState(){
+    try {
+      const res = await window.storage.get('tennis_arb_bankroll');
+      bankroll = res ? parseFloat(res.value) : 100;
+      if (isNaN(bankroll)) bankroll = 100;
+    } catch(e){
+      bankroll = 100;
+    }
+    try {
+      const res = await window.storage.get('tennis_arb_log');
+      log = res ? JSON.parse(res.value) : [];
+    } catch(e){
+      log = [];
+    }
+    bankrollInput.value = bankroll.toFixed(2);
+    renderBadge();
+    renderLog();
+  }
+
+  async function saveState(){
+    try { await window.storage.set('tennis_arb_bankroll', bankroll.toFixed(2)); } catch(e){}
+    try { await window.storage.set('tennis_arb_log', JSON.stringify(log)); } catch(e){}
+  }
+
+  function renderBadge(){
+    $('badgeBankroll').textContent = fmtEuro(bankroll);
+  }
+
+  function renderLog(){
+    const body = $('logBody');
+    const emptyMsg = $('logEmptyMsg');
+    body.innerHTML = '';
+    if (log.length === 0){
+      emptyMsg.style.display = 'block';
+      return;
+    }
+    emptyMsg.style.display = 'none';
+    log.forEach(function(entry){
+      const tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + entry.match + '</td>' +
+        '<td class="num">' + fmtEuro(entry.stakeA) + ' @ ' + entry.oddsA.toFixed(2) + '</td>' +
+        '<td class="num">' + fmtEuro(entry.stakeB) + ' @ ' + entry.oddsB.toFixed(2) + '</td>' +
+        '<td class="num">' + fmtPct(entry.sigma*100) + '</td>' +
+        '<td class="num" style="color:' + (entry.profit>=0 ? 'var(--ok)' : 'var(--danger)') + '">' + fmtEuro(entry.profit) + '</td>' +
+        '<td class="num">' + fmtEuro(entry.bankrollAfter) + '</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  logBtn.addEventListener('click', async function(){
+    if (!currentCalc || !currentCalc.arbExists) return;
+    const name = matchName.value.trim() || 'Untitled match';
+    const bankrollAfter = bankroll + currentCalc.guaranteedProfit;
+    log.push({
+      match: name,
+      oddsA: currentCalc.oddsA,
+      oddsB: currentCalc.oddsB,
+      stakeA: currentCalc.stakeA,
+      stakeB: currentCalc.stakeB,
+      sigma: 1/currentCalc.oddsA + 1/currentCalc.oddsB,
+      profit: currentCalc.guaranteedProfit,
+      bankrollAfter: bankrollAfter
+    });
+    bankroll = bankrollAfter;
+    bankrollInput.value = bankroll.toFixed(2);
+    renderBadge();
+    renderLog();
+    await saveState();
+    recalc();
+  });
+
+  clearLogBtn.addEventListener('click', async function(){
+    if (!confirm('Reset the bet log and bankroll back to €100? This cannot be undone.')) return;
+    log = [];
+    bankroll = 100;
+    bankrollInput.value = '100.00';
+    renderBadge();
+    renderLog();
+    await saveState();
+    recalc();
+  });
+
+  [oddsAInput, oddsBInput, bankrollInput, roundMode, bookAName, bookBName].forEach(function(el){
+    el.addEventListener('input', recalc);
+  });
+  [ruleA, ruleB].forEach(function(el){
+    el.addEventListener('change', recalc);
+  });
+
+  // --- daily scan ---
+  function escapeHtml(s){
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];
+    });
+  }
+  function escapeAttr(s){ return escapeHtml(s).replace(/'/g,'&#39;'); }
+
+  const scanBtn = $('scanBtn'), scanStatus = $('scanStatus'), scanResults = $('scanResults');
+
+  async function scanTodaysMatches(){
+    const today = new Date().toISOString().slice(0,10);
+    scanBtn.disabled = true;
+    scanBtn.textContent = 'Scanning…';
+    scanStatus.style.display = 'block';
+    scanStatus.textContent = "Searching today's ATP/WTA schedule and recent news…";
+    scanResults.innerHTML = '';
+
+    const systemPrompt =
+      "You are a tennis betting market research assistant. Use web search to find today's ATP and WTA main tour singles match schedule for " + today + ". " +
+      "Flag matches worth a bettor manually checking odds on across multiple sportsbooks, because of one of: recent injury or fitness doubt, a retirement earlier this season, strongly lopsided public betting sentiment, or notable withdrawal/walkover risk. " +
+      "Do not invent odds numbers — you have no access to live odds feeds, only note qualitative reasons. " +
+      "Respond with ONLY raw JSON, no markdown code fences, no commentary before or after, in exactly this shape: " +
+      '{"date":"YYYY-MM-DD","matches":[{"players":"Name A vs Name B","tournament":"...","round":"...","flag":"short flag label","note":"one sentence reason"}]}' +
+      " Include at most 8 matches, strongest flags first. If reliable schedule information cannot be found, respond with " +
+      '{"date":"' + today + '","matches":[],"error":"short explanation"}.';
+
+    try {
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          system: systemPrompt,
+          messages: [{ role: "user", content: "Scan today's ATP/WTA matches now and return the JSON only." }],
+          tools: [{ type: "web_search_20250305", name: "web_search" }]
+        })
+      });
+
+      const data = await response.json();
+      const textBlocks = (data.content || []).filter(function(b){ return b.type === 'text'; }).map(function(b){ return b.text; });
+      const raw = textBlocks.join('\n').trim();
+      const cleaned = raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+      const parsed = JSON.parse(cleaned);
+
+      scanStatus.style.display = 'none';
+
+      if (parsed.error || !parsed.matches || parsed.matches.length === 0){
+        scanResults.innerHTML = '<div class="log-empty">' + escapeHtml(parsed.error || 'No standout matches surfaced for today.') + '</div>';
+        return;
+      }
+
+      parsed.matches.forEach(function(m){
+        const card = document.createElement('div');
+        card.className = 'match-card';
+        card.innerHTML =
+          '<div class="top">' +
+            '<div><div class="players">' + escapeHtml(m.players) + '</div>' +
+            '<div class="meta">' + escapeHtml(m.tournament) + (m.round ? (' — ' + escapeHtml(m.round)) : '') + '</div></div>' +
+            '<div class="flag">' + escapeHtml(m.flag || 'watch') + '</div>' +
+          '</div>' +
+          '<div class="note">' + escapeHtml(m.note) + '</div>' +
+          '<button type="button" class="btn-ghost use-btn" data-players="' + escapeAttr(m.players) + '" data-tournament="' + escapeAttr(m.tournament) + '" data-round="' + escapeAttr(m.round) + '">Use this match →</button>';
+        scanResults.appendChild(card);
+      });
+
+      scanResults.querySelectorAll('.use-btn').forEach(function(b){
+        b.addEventListener('click', function(){
+          const label = this.dataset.players +
+            (this.dataset.tournament ? (' — ' + this.dataset.tournament) : '') +
+            (this.dataset.round ? (', ' + this.dataset.round) : '');
+          matchName.value = label;
+          const stakePanel = $('stakePanel');
+          if (stakePanel) stakePanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          oddsAInput.focus();
+        });
+      });
+
+      const disclaimer = document.createElement('div');
+      disclaimer.className = 'scan-disclaimer';
+      disclaimer.textContent = 'Web-search based, not a live odds feed — confirm real odds and retirement rules yourself before pairing books.';
+      scanResults.appendChild(disclaimer);
+
+    } catch (err) {
+      scanStatus.style.display = 'none';
+      scanResults.innerHTML = '<div class="log-empty">Couldn\'t retrieve today\'s schedule right now (' + escapeHtml(err && err.message ? err.message : String(err)) + '). Try again in a moment, or check ATP/WTA schedules manually.</div>';
+    } finally {
+      scanBtn.disabled = false;
+      scanBtn.textContent = "Scan today's matches";
+    }
+  }
+
+  scanBtn.addEventListener('click', scanTodaysMatches);
+
+  loadState().then(recalc);
+})();
+</script>
