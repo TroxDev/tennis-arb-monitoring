@@ -14,17 +14,6 @@ This project demonstrates end-to-end observability for a web service:
 - **Alerting** via Alertmanager on downtime and high latency
 - **Auto-recovery** via Python script that restarts the service after consecutive failures
 
-## Architecture
-┌─────────────┐     ┌─────────────────┐     ┌─────────────┐
-│   nginx     │◄────│  Blackbox       │◄────│  Prometheus │
-│  (web app)  │     │  Exporter       │     │             │
-└─────────────┘     └─────────────────┘     └──────┬──────┘
-│
-┌──────▼──────┐
-│ Alertmanager│
-│  (alerts)   │
-└─────────────┘
-
 
 ## Tech Stack
 
