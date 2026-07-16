@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-# tennis-arb-monitoring
+
+
 A simple web tennis arbitrage model with monitoring and alerting stack
 =======
 # Tennis Arbitrage Monitoring Stack
